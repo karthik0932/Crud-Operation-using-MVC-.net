@@ -1,0 +1,103 @@
+﻿@model IPagedList<CrudOperation.Models.Products>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+@using PagedList;
+@using PagedList.Mvc;
+
+<style>
+    .product-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 20px;
+    }
+
+    .product-item {
+        border: 1px solid #ddd;
+        padding: 10px;
+        text-align: center;
+        background-color: #f9f9f9;
+    }
+
+    .product-actions {
+        margin-top: 10px;
+    }
+
+    .product-row {
+        display: table;
+        width: 100%;
+        border: 1px solid #ddd;
+        margin: 10px 0;
+        padding: 10px;
+    }
+
+    .product-row-info {
+        display: table-cell;
+        padding: 10px;
+        vertical-align: top;
+    }
+
+    .product-row-actions {
+        display: table-cell;
+        padding: 10px;
+        vertical-align: top;
+    }
+</style>
+
+<br />
+<p>
+    @Html.ActionLink("Create Product", "Create", null, new { @class = "btn btn-primary" })
+</p>
+
+<div>
+    @using (Html.BeginForm("Index", "Products", FormMethod.Get))
+    {
+        <table>
+            <tr>
+                <td>
+                    <span><b>Search By:</b></span>
+                    @Html.RadioButton("searchBy", "ProductName")
+                    <text> Product Name</text>
+                    @Html.RadioButton("searchBy", "Price")
+                    <text>Price</text>
+                    @Html.RadioButton("searchBy", "Qty")
+                    <text>Qty</text>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @Html.TextBox("searchValue", null, new { Class = "form-control", placeholder = "Enter product Name or Price or Qty" })
+                </td>
+                <td>
+                    &nbsp;
+                </td>
+                <td>
+                    <input type="submit" value="Search" class="btn btn-success" />
+                </td>
+            </tr>
+        </table>
+    }
+</div>
+<br />
+
+<div class="product-grid">
+    @foreach (var item in Model)
+    {
+        <div class="product-item">
+            <h4>@Html.DisplayFor(modelItem => item.ProductName)</h4>
+            <p>Price: @Html.DisplayFor(modelItem => item.Price)</p>
+            <p>Qty: @Html.DisplayFor(modelItem => item.Qty)</p>
+            <div class="product-actions">
+                @Html.ActionLink("Edit", "Edit", new { id = item.ProductID }, new { @class = "btn btn-primary" })
+                @Html.ActionLink("Details", "Details", new { id = item.ProductID }, new { @class = "btn btn-success" })
+                @Html.ActionLink("Delete", "Delete", new { id = item.ProductID }, new { @class = "btn btn-danger" })
+            </div>
+        </div>
+    }
+</div>
+
+
+
+@Html.PagedListPager(Model, i => Url.Action("Index", "Products", new { i, search = Request.QueryString["search"] }))
